@@ -1,1 +1,2 @@
 - Finish create_more_data function
+- Change the factor impact: It should increase the number of available_bikes (or reduce the available_stands)
