@@ -1,5 +1,5 @@
 # Created by Carlos Alvarez Cia on 02-07-2025
-import get_data_from_postgresql as data_fetcher
+import create_db.get_data_from_postgresql as data_fetcher
 
 if __name__ == "__main__":
     print("This is the main module of the project.")
