@@ -1,0 +1,30 @@
+{
+    "temperature" : {
+        "min" : 0,
+        "max" : 45,
+        "mean" : 25,
+        "std": 10,
+        "min_acc" : 10,
+        "max_acc" : 25,
+        "impact" : -0.3
+    },
+    "binary_events" : [
+        {"rain": {
+            "probability" : 0.05,
+            "impact" : -0.8
+        }},
+        {"public_holiday": {
+            "probability" : 0.02,
+            "impact" : -0.3
+        }},
+        {"strong_wind": {
+            "probability" : 0.01,
+            "impact" : -0.5
+        }},
+        {"transport_strike": {
+            "probability" : 0.01,
+            "impact" : 0.5
+        }}
+    ]
+
+}
