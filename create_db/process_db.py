@@ -63,3 +63,15 @@ def fill_gaps_with_synthetic_data(real_data):
         filled_data_df = pd.concat([filled_data_df, filled_data_station], ignore_index=True)
 
     return filled_data_df
+
+def split_by_day(data):
+    """ Split the data by day.
+    
+    Args:
+        data (pd.DataFrame): The data DataFrame.
+    
+    Returns:
+        list: A list of DataFrames, each containing data for one day. (Thursday, Friday, Saturday)
+    """
+    data['date'] = data['timestamp'].dt.date
+    return [group for _, group in data.groupby('date')]
