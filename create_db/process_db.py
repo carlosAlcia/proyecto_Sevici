@@ -104,6 +104,47 @@ def compute_probability_factor(events_probabilities):
     return factor, events
 
 
+def compute_temperature_factor(temperature_data):
+    temperature = int(np.random.normal(temperature_data['mean'], temperature_data['std'], 1))
+    if temperature < temperature_data['min']:
+        temperature = temperature_data['min']
+    elif temperature > temperature_data['max']:
+        temperature = temperature_data['max']
+
+    
+    if temperature < temperature_data['min_acc'] or temperature > temperature_data['max_acc']:
+        return temperature_data['impact'], temperature
+    else:
+        return 1.0, temperature
+
+
+def create_day_data(day_data, day, i, events_probabilities):
+
+    # Create the data from the first monday of june 2025
+    initial_timestamp = pd.to_datetime('2025-06-02 00:00:00')
+
+    # Compute the temperature factor
+    temperature_factor, temperature = compute_temperature_factor(events_probabilities['temperature'])
+
+    factor, events = compute_probability_factor(events_probabilities['binary_events'])
+    # Apply the temperature factor to the available stands
+    factor *= temperature_factor
+
+    day_data['timestamp'] = initial_timestamp + pd.Timedelta(days=i * 7 + day)
+    # Save the size of station before applying the factor
+    station_size = day_data['available_bikes'] + day_data['available_stands']
+    # Apply the factor to the difference in available stands
+    day_data['available_stands'] = (day_data['available_stands'] * factor).astype(int)
+    # Ensure the available stands do not exceed the station size
+    day_data['available_stands'] = day_data['available_stands'].clip(upper=station_size)
+    # Update the available bikes accordingly
+    day_data['available_bikes'] = (station_size - day_data['available_stands']).astype(int)
+    for event_dict, occurred in zip(events_probabilities['binary_events'], events):
+        event_name, _ = list(event_dict.items())[0]
+        day_data[event_name] = occurred
+    # Add temperature impact
+    day_data['temperature'] = temperature
+    return day_data
 
 
 def create_more_data(daily_data, weeks=4):
@@ -122,64 +163,25 @@ def create_more_data(daily_data, weeks=4):
     friday = daily_data[1]  # Friday data
     weekend = daily_data[2]  # Saturday data
 
-    # Create the data from the first monday of june 2025
-    initial_timestamp = pd.to_datetime('2025-06-02 00:00:00')
-
     with open('create_db/probabilities.json', 'r') as file:
-        events_probabilities = json.load(file)['binary_events']
+        events_probabilities = json.load(file)
 
     for i in range(weeks):
         for day in range(7):
-            factor, events = compute_probability_factor(events_probabilities)
-
             match day:
                 # For workdays (Monday to Thursday)
                 case 0 | 1 | 2 | 3 :  
                     day_data = workday.copy()
-                    day_data['timestamp'] = initial_timestamp + pd.Timedelta(days=i * 7 + day)
-                    # Save the size of station before applying the factor
-                    station_size = day_data['available_bikes'] + day_data['available_stands']
-                    # Apply the factor to the difference in available bikes
-                    day_data['available_bikes'] = (day_data['available_bikes'] * factor).astype(int)
-                    # Ensure the available bikes do not exceed the station size
-                    day_data['available_bikes'] = day_data['available_bikes'].clip(upper=station_size)
-                    # Update the available stands accordingly
-                    day_data['available_stands'] = station_size - day_data['available_bikes']
-                    for event_dict, occurred in zip(events_probabilities, events):
-                        event_name, _ = list(event_dict.items())[0]
-                        day_data[event_name] = occurred
+                    day_data = create_day_data(day_data, day, i, events_probabilities)
                     
                 # For Friday
                 case 4:
                     day_data = friday.copy()
-                    day_data['timestamp'] = initial_timestamp + pd.Timedelta(days=i * 7 + day)
-                    # Save the size of station before applying the factor
-                    station_size = day_data['available_bikes'] + day_data['available_stands']
-                    # Apply the factor to the difference in available bikes
-                    day_data['available_bikes'] = (day_data['available_bikes'] * factor).astype(int)
-                    # Ensure the available bikes do not exceed the station size
-                    day_data['available_bikes'] = day_data['available_bikes'].clip(upper=station_size)
-                    # Update the available stands accordingly
-                    day_data['available_stands'] = station_size - day_data['available_bikes']
-                    for event_dict, occurred in zip(events_probabilities, events):
-                        event_name, _ = list(event_dict.items())[0]
-                        day_data[event_name] = occurred
-
+                    day_data = create_day_data(day_data, day, i, events_probabilities)
                 # For Saturday and Sunday
                 case 5 | 6 :
                     day_data = weekend.copy()
-                    day_data['timestamp'] = initial_timestamp + pd.Timedelta(days=i * 7 + day)
-                    # Save the size of station before applying the factor
-                    station_size = day_data['available_bikes'] + day_data['available_stands']
-                    # Apply the factor to the difference in available bikes
-                    day_data['available_bikes'] = (day_data['available_bikes'] * factor).astype(int)
-                    # Ensure the available bikes do not exceed the station size
-                    day_data['available_bikes'] = day_data['available_bikes'].clip(upper=station_size)
-                    # Update the available stands accordingly
-                    day_data['available_stands'] = station_size - day_data['available_bikes']
-                    for event_dict, occurred in zip(events_probabilities, events):
-                        event_name, _ = list(event_dict.items())[0]
-                        day_data[event_name] = occurred
+                    day_data = create_day_data(day_data, day, i, events_probabilities)
             
             complete_data = pd.concat([complete_data, day_data], ignore_index=True)
     
