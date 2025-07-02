@@ -130,6 +130,7 @@ def create_day_data(day_data, day, i, events_probabilities):
     # Apply the temperature factor to the available stands
     factor *= temperature_factor
 
+    # TODO modify this to use hours and minutes
     day_data['timestamp'] = initial_timestamp + pd.Timedelta(days=i * 7 + day)
     # Save the size of station before applying the factor
     station_size = day_data['available_bikes'] + day_data['available_stands']
