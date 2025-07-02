@@ -1,2 +1,3 @@
 - Finish create_more_data function
-- Change the factor impact: It should increase the number of available_bikes (or reduce the available_stands)
+    - Change the factor impact: It should increase the number of available_bikes (or reduce the available_stands)
+    - Add the temperature impact: Same temperature for the whole day, not realistic but simple.
