@@ -136,7 +136,7 @@ def create_day_data(day_data, day, i, events_probabilities):
     # Apply the factor to the difference in available stands
     day_data['available_stands'] = (day_data['available_stands'] * factor).astype(int)
     # Ensure the available stands do not exceed the station size
-    day_data['available_stands'] = day_data['available_stands'].clip(upper=station_size)
+    day_data['available_stands'] = day_data['available_stands'].clip(upper=station_size, lower=0)
     # Update the available bikes accordingly
     day_data['available_bikes'] = (station_size - day_data['available_stands']).astype(int)
     for event_dict, occurred in zip(events_probabilities['binary_events'], events):
