@@ -6,7 +6,7 @@
         "std": 10,
         "min_acc" : 10,
         "max_acc" : 25,
-        "impact" : -0.3
+        "impact" : -0.5
     },
     "binary_events" : [
         {"rain": {

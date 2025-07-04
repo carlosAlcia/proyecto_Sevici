@@ -120,18 +120,16 @@ def compute_temperature_factor(temperature_data):
 
 def create_day_data(day_data, day, i, events_probabilities):
 
-    # Create the data from the first monday of june 2025
-    initial_timestamp = pd.to_datetime('2025-06-02 00:00:00')
+
 
     # Compute the temperature factor
     temperature_factor, temperature = compute_temperature_factor(events_probabilities['temperature'])
 
     factor, events = compute_probability_factor(events_probabilities['binary_events'])
     # Apply the temperature factor to the available stands
-    factor *= temperature_factor
+    factor += temperature_factor
 
-    # TODO modify this to use hours and minutes
-    day_data['timestamp'] = initial_timestamp + pd.Timedelta(days=i * 7 + day)
+    day_data['timestamp'] +=  pd.Timedelta(days=day-3, weeks=i) # The -3 is to start from the first day of the week in June(Monday)
     # Save the size of station before applying the factor
     station_size = day_data['available_bikes'] + day_data['available_stands']
     # Apply the factor to the difference in available stands
@@ -172,18 +170,16 @@ def create_more_data(daily_data, weeks=4):
             match day:
                 # For workdays (Monday to Thursday)
                 case 0 | 1 | 2 | 3 :  
-                    day_data = workday.copy()
-                    day_data = create_day_data(day_data, day, i, events_probabilities)
-                    
+                    day_data = workday.copy()                    
                 # For Friday
                 case 4:
                     day_data = friday.copy()
-                    day_data = create_day_data(day_data, day, i, events_probabilities)
                 # For Saturday and Sunday
                 case 5 | 6 :
                     day_data = weekend.copy()
-                    day_data = create_day_data(day_data, day, i, events_probabilities)
             
+            day_data = create_day_data(day_data, day, i, events_probabilities)
             complete_data = pd.concat([complete_data, day_data], ignore_index=True)
+            complete_data.drop(columns=['date'], inplace=True, errors='ignore')
     
     return complete_data
