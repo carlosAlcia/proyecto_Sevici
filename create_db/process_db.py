@@ -162,7 +162,7 @@ def create_more_data(daily_data, weeks=4):
     friday = daily_data[1]  # Friday data
     weekend = daily_data[2]  # Saturday data
 
-    with open('create_db/probabilities.json', 'r') as file:
+    with open('probabilities.json', 'r') as file:
         events_probabilities = json.load(file)
 
     for i in range(weeks):
