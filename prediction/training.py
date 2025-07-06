@@ -1,7 +1,7 @@
 # Created by Carlos Alvarez on 06-07-2025
 import pandas as pd
 from preprocess import preprocess_data
-from catboost import CatBoostRegressor, Pool
+from catboost import CatBoostRegressor
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
@@ -27,16 +27,10 @@ if __name__ == "__main__":
     # Evaluate the model on the test data
     test_score = model.score(X_test, y_test)
     print(f'Test score: {test_score}')
-
-    # Plot the model trees
-    # Graficar el primer árbol
-    plt.figure(figsize=(20, 10))  # Opcional: ajustar tamaño del gráfico
-    feature_names = X.columns
-    pool = Pool(X_test, y_test, feature_names=list(feature_names))
-    model.plot_tree(tree_idx=0, pool=pool)
-    plt.show()
+ 
 
     # Plot feature importances
+    feature_names = X.columns
     importances = model.get_feature_importance()
     plt.figure(figsize=(10, 6))
     plt.barh(feature_names, importances)
