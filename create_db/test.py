@@ -13,7 +13,7 @@ if __name__ == "__main__":
     processed_data = process_db.filter_three_days(real_data)
     processed_data = process_db.fill_gaps_with_synthetic_data(processed_data)
     processed_data = process_db.split_by_day(processed_data)
-    processed_data = process_db.create_more_data(processed_data,3)
+    processed_data = process_db.create_more_data(processed_data,12)
     processed_data.to_csv('processed_data.csv', index=False, date_format='%d-%m-%Y-%H-%M-%S')  # Save the processed data to a CSV file
       
 

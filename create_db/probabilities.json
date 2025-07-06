@@ -10,19 +10,19 @@
     },
     "binary_events" : [
         {"rain": {
-            "probability" : 0.05,
+            "probability" : 0.1,
             "impact" : -0.8
         }},
         {"public_holiday": {
-            "probability" : 0.02,
+            "probability" : 0.05,
             "impact" : -0.3
         }},
         {"strong_wind": {
-            "probability" : 0.01,
+            "probability" : 0.05,
             "impact" : -0.5
         }},
         {"transport_strike": {
-            "probability" : 0.01,
+            "probability" : 0.05,
             "impact" : 0.5
         }}
     ]
