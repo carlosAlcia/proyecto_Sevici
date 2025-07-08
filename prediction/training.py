@@ -10,6 +10,8 @@ if __name__ == "__main__":
     # Load the dataset from the CSV file
     dataset = pd.read_csv('dataset.csv')
 
+    # TODO: To have the last day of data, we need to get it here, before the preprocess.
+
     # Preprocess the dataset
     dataset = preprocess_data(dataset)
 
