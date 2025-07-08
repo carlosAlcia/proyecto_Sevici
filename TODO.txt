@@ -3,7 +3,7 @@ DONE - Finish create_more_data function
      - Add the temperature impact: Same temperature for the whole day, not realistic but simple.
 
 - Add representation for test and predicted values: 
-    - In form of X-Y=0 graph 
+    DONE - In form of X-Y=0 graph 
     - In form of a complete day prediction: Remove one day from the training data and add it to the test data.
         Graph both curves, real and predicted and compare them.
 
