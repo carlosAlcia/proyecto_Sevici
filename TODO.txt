@@ -1,3 +1,10 @@
-- Finish create_more_data function
-    - Change the factor impact: It should increase the number of available_bikes (or reduce the available_stands)
-    - Add the temperature impact: Same temperature for the whole day, not realistic but simple.
+DONE - Finish create_more_data function
+     - Change the factor impact: It should increase the number of available_bikes (or reduce the available_stands)
+     - Add the temperature impact: Same temperature for the whole day, not realistic but simple.
+
+- Add representation for test and predicted values: 
+    - In form of X-Y=0 graph 
+    - In form of a complete day prediction: Remove one day from the training data and add it to the test data.
+        Graph both curves, real and predicted and compare them.
+
+- Create server to have an UI and ask for predictions ?
