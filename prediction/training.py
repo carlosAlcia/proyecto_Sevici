@@ -26,6 +26,9 @@ if __name__ == "__main__":
     # Fit the model on the training data
     model.fit(X_train, y_train)
 
+    # Make predictions on the test data
+    predictions = model.predict(X_test)
+
     # Evaluate the model on the test data
     test_score = model.score(X_test, y_test)
     print(f'Test score: {test_score}')
@@ -38,6 +41,16 @@ if __name__ == "__main__":
     plt.barh(feature_names, importances)
     plt.xlabel("Feature Importance")
     plt.title("CatBoost Feature Importances")
+    plt.show()
+
+    # Plot the predictions vs actual values
+    plt.figure(figsize=(10, 6))
+    plt.scatter(y_test, predictions, alpha=0.5)
+    plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2)
+    plt.xlabel("Actual Values")
+    plt.ylabel("Predictions")
+    plt.grid(True)
+    plt.title("Predictions vs Actual Values")
     plt.show()
 
 
