@@ -7,10 +7,12 @@ DONE - Add representation for test and predicted values:
     DONE - In form of a complete day prediction: Remove one day from the training data and add it to the test data.
         Graph both curves, real and predicted and compare them.
 
-- Use Neural Network model
-    - Split dataset into training, validation and test.
-    - Normalize the features and target variables
-    - Implement early stopping
-    
+DONE - Use Neural Network model
+    DONE - Split dataset into training, validation and test.
+    DONE - Normalize the features and target variables
+    DONE - Implement early stopping
+
+- Improve code structure, comments...
+
 
 - Create server to have an UI and ask for predictions ?
