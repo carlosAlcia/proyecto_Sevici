@@ -38,15 +38,9 @@ if __name__ == "__main__":
 
 
     model = ModelNN(input_size=X_train.shape[1], hidden_size=[256, 128], output_size=1)
-    # Convert data to PyTorch tensors
-    X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
-    X_val_tensor = torch.tensor(X_val, dtype=torch.float32)
-    y_train_tensor = torch.tensor(y_train, dtype=torch.float32).view(-1, 1)
-    y_val_tensor = torch.tensor(y_val, dtype=torch.float32).view(-1, 1)
-    X_test_tensor = torch.tensor(X_test, dtype=torch.float32)    
-    
+        
     # Fit the model
-    model,train_losses, val_losses = model.fit(X_train_tensor, y_train_tensor, X_val_tensor, y_val_tensor, epochs=2000, lr=0.005, patience=100)
+    model,train_losses, val_losses = model.fit(X_train, y_train, X_val, y_val, epochs=2000, lr=0.005, patience=100)
     # Plot training and validation losses
     plt.figure(figsize=(10, 6))
     plt.plot(train_losses, label='Training Loss')
@@ -57,12 +51,12 @@ if __name__ == "__main__":
     plt.show()
 
     # Make predictions
-    predictions_nn = model.predict(X_test_tensor).numpy()
+    predictions_nn = model.predict(X_test).numpy()
     # Postprocess the predictions
     predictions_nn = scaler_target.inverse_transform(predictions_nn).flatten()
     predictions_nn = postprocess_predictions(predictions_nn)
     # Evaluate the model on the test data
-    test_score_nn = model.score(X_test_tensor, torch.tensor(y_test, dtype=torch.float32).view(-1, 1))
+    test_score_nn = model.score(X_test, torch.tensor(y_test, dtype=torch.float32).view(-1, 1))
     print(f'Test score (NN): {test_score_nn}')
 
     y_test = scaler_target.inverse_transform(y_test.reshape(-1, 1)).flatten()
@@ -78,9 +72,8 @@ if __name__ == "__main__":
 
     # Check the last day of data
     X_test_last_day, y_test_last_day = preprocess_data(dataset_test_last_day)
-    X_test_last_day_values = scaler_feat.transform(X_test_last_day.values)
-    X_test_last_day_tensor = torch.tensor(X_test_last_day_values, dtype=torch.float32)
-    predictions_last_day = model.predict(X_test_last_day_tensor).numpy()
+    X_test_last_day_values = scaler_feat.transform(X_test_last_day)
+    predictions_last_day = model.predict(X_test_last_day_values).numpy()
     predictions_last_day = scaler_target.inverse_transform(predictions_last_day).flatten()
     predictions_last_day = postprocess_predictions(predictions_last_day)
 

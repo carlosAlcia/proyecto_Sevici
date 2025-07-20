@@ -1,4 +1,6 @@
 import torch 
+import pandas as pd
+import numpy as np
 
 class ModelNN(torch.nn.Module):
     def __init__(self, input_size:int, hidden_size:list[int], output_size:int):
@@ -22,20 +24,36 @@ class ModelNN(torch.nn.Module):
         """Forward pass through the neural network."""
         return self.layers(x)
     
-    def predict(self, x:torch.Tensor) -> torch.Tensor:
+    def predict(self, x:pd.DataFrame) -> torch.Tensor:
         """Make predictions using the neural network."""
+        # Convert DataFrame to PyTorch tensor
+        if isinstance(x, pd.DataFrame):
+            x = torch.tensor(x.values, dtype=torch.float32)
+        if isinstance(x, np.ndarray):
+            x = torch.tensor(x, dtype=torch.float32)
         self.eval()
         with torch.no_grad():
             return self.forward(x)
         self.train()
         return self.forward(x)
 
-    def fit(self, x:torch.Tensor, y:torch.Tensor, x_val:torch.Tensor=None, y_val:torch.Tensor=None, epochs:int=100, lr:float=0.001, early_stopping:bool=True, patience:int=10) -> tuple[list, list]:
+    def fit(self, x:pd.DataFrame, y:pd.DataFrame, x_val:pd.DataFrame=None, y_val:pd.DataFrame=None, epochs:int=100, lr:float=0.001, early_stopping:bool=True, patience:int=10) -> tuple[list, list]:
         """Train the neural network."""
+
+        # Convert DataFrame to PyTorch tensors
+        x = torch.tensor(x, dtype=torch.float32)
+        y = torch.tensor(y, dtype=torch.float32).view(-1, 1)
+        if x_val is not None:
+            x_val = torch.tensor(x_val, dtype=torch.float32)
+            y_val = torch.tensor(y_val, dtype=torch.float32).view(-1, 1)
+
+        # Define loss function and optimizer
         criterion = torch.nn.MSELoss()
         optimizer = torch.optim.Adam(self.parameters(), lr=lr)
+        # Initialize variables for early stopping
         best_val_loss = float('inf')
         current_patience = 0
+        # Lists to store training and validation losses
         train_losses = []
         val_losses = []
 
@@ -73,8 +91,16 @@ class ModelNN(torch.nn.Module):
         self.eval()
         return self, train_losses, val_losses
     
-    def score(self, x:torch.Tensor, y:torch.Tensor) -> float:
+    def score(self, x:pd.DataFrame, y:pd.DataFrame) -> float:
         """Evaluate the model on the test data."""
+        if isinstance(x, pd.DataFrame):
+            x = torch.tensor(x.values, dtype=torch.float32)
+        if isinstance(y, pd.DataFrame):
+            y = torch.tensor(y.values, dtype=torch.float32).view(-1, 1)
+        if isinstance(x, np.ndarray):
+            x = torch.tensor(x, dtype=torch.float32)
+        if isinstance(y, np.ndarray):
+            y = torch.tensor(y, dtype=torch.float32).view(-1, 1)
         self.eval()
         with torch.no_grad():
             output = self.forward(x)
