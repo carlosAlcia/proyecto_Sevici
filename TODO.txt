@@ -2,9 +2,15 @@ DONE - Finish create_more_data function
      - Change the factor impact: It should increase the number of available_bikes (or reduce the available_stands)
      - Add the temperature impact: Same temperature for the whole day, not realistic but simple.
 
-- Add representation for test and predicted values: 
+DONE - Add representation for test and predicted values: 
     DONE - In form of X-Y=0 graph 
-    - In form of a complete day prediction: Remove one day from the training data and add it to the test data.
+    DONE - In form of a complete day prediction: Remove one day from the training data and add it to the test data.
         Graph both curves, real and predicted and compare them.
+
+- Use Neural Network model
+    - Split dataset into training, validation and test.
+    - Normalize the features and target variables
+    - Implement early stopping
+    
 
 - Create server to have an UI and ask for predictions ?
