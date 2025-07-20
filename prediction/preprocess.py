@@ -21,8 +21,6 @@ def split_last_day_data(dataset : pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFr
     # This is to avoid data leakage in the training phase.
     dataset_train = dataset[dataset['timestamp'].dt.day < last_day]
 
-    print(len(dataset_test_last_day), "rows in the last day of data")
-
     return dataset_train, dataset_test_last_day
 
 
