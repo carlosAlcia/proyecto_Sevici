@@ -10,3 +10,9 @@ def postprocess_predictions(predictions:np.ndarray) -> np.ndarray:
     predictions = predictions.clip(min=0)
 
     return predictions
+
+def minutes_to_hhmm(x, pos):
+    """Convert minutes to HH:MM format for plotting."""
+    hours = int(x // 60)
+    minutes = int(x % 60)
+    return f'{hours:02}:{minutes:02}'

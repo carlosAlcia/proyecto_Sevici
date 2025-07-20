@@ -1,17 +1,13 @@
 # Created by Carlos Alvarez on 06-07-2025
 import pandas as pd
 from preprocess import preprocess_data, split_last_day_data
-from postprocess import postprocess_predictions
+from postprocess import postprocess_predictions, minutes_to_hhmm
 from catboost import CatBoostRegressor
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-def minutes_to_hhmm(x, pos):
-    """Convert minutes to HH:MM format for plotting."""
-    hours = int(x // 60)
-    minutes = int(x % 60)
-    return f'{hours:02}:{minutes:02}'
+
 
 
 if __name__ == "__main__":
@@ -23,12 +19,11 @@ if __name__ == "__main__":
 
     # Preprocess the dataset
     X, y = preprocess_data(dataset)
+    # Split the dataset into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
     # First prediction model : catboost. No need to do further preprocessing.
     model = CatBoostRegressor(iterations=1000, learning_rate=0.1, depth=8, loss_function='RMSE', verbose=100)
-
-    # Split the dataset into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
     # Fit the model on the training data
     model.fit(X_train, y_train)
