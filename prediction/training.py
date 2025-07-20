@@ -1,9 +1,17 @@
 # Created by Carlos Alvarez on 06-07-2025
 import pandas as pd
 from preprocess import preprocess_data, split_last_day_data
+from postprocess import postprocess_predictions
 from catboost import CatBoostRegressor
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+
+def minutes_to_hhmm(x, pos):
+    """Convert minutes to HH:MM format for plotting."""
+    hours = int(x // 60)
+    minutes = int(x % 60)
+    return f'{hours:02}:{minutes:02}'
 
 
 if __name__ == "__main__":
@@ -17,7 +25,7 @@ if __name__ == "__main__":
     X, y = preprocess_data(dataset)
 
     # First prediction model : catboost. No need to do further preprocessing.
-    model = CatBoostRegressor(iterations=1000, learning_rate=0.1, depth=6, loss_function='RMSE', verbose=100)
+    model = CatBoostRegressor(iterations=1000, learning_rate=0.1, depth=8, loss_function='RMSE', verbose=100)
 
     # Split the dataset into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
@@ -27,6 +35,8 @@ if __name__ == "__main__":
 
     # Make predictions on the test data
     predictions = model.predict(X_test)
+    # Postprocess the predictions
+    predictions = postprocess_predictions(predictions)
 
     # Evaluate the model on the test data
     test_score = model.score(X_test, y_test)
@@ -55,6 +65,7 @@ if __name__ == "__main__":
     # Check the last day of data
     X_test_last_day, y_test_last_day = preprocess_data(dataset_test_last_day)
     predictions_last_day = model.predict(X_test_last_day)
+    predictions_last_day = postprocess_predictions(predictions_last_day)
 
     # Plot the predictions for the last day of data for each station
     stations = X_test_last_day['station_number'].unique()
@@ -68,12 +79,12 @@ if __name__ == "__main__":
         ax = axes[i]
         ax.plot(station_data['hour_minute'], station_predictions, label='Prediction', marker='o')
         ax.plot(station_data['hour_minute'], station_actual, label='Actual', marker='x')
-        ax.set
         ax.set_title(f'Station {station}')
         ax.set_xlabel('Hour-Minute')
         ax.set_ylabel('Number of Bikes')
         ax.legend()
         ax.grid(True)
+        ax.xaxis.set_major_formatter(ticker.FuncFormatter(minutes_to_hhmm))
         ax.tick_params(axis='x', rotation=45)
 
     plt.tight_layout()
