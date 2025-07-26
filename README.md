@@ -61,9 +61,7 @@ Para evaluar los modelos, se separa el último día y otros puntos aleatorios de
     ![MLP Day Graph](./prediction/images/NN.png)
     De nuevo, el modelo es capaz de aprender los valores medios según la estación y la hora del día.
 
-
-
-
+Como es de esperar, y dado que la base de datos ha sido en gran parte generada de forma sintética con conceptos muy simplificados, los modelos pueden aprender bien sobre los datos sin mucha complicación ni recurrir a técnicas cómo data augmentation, feature engineering o modelos neuronales más complejos.
 
 
 # Estructura de archivos
@@ -74,4 +72,4 @@ Para evaluar los modelos, se separa el último día y otros puntos aleatorios de
 No se trata de una aplicación en producción ni de un sistema completo funcional.
 Su objetivo principal es servir como ejemplo técnico dentro de un portafolio personal, mostrando el uso de herramientas como Python, PostgreSQL, APIs públicas, visualización de datos, y conceptos de Machine Learning.
 
-Si bien los datos utilizados son reales, el foco del proyecto está en la integración tecnológica, no en la explotación final de los resultados.
+El foco del proyecto está en la integración tecnológica, no en la explotación final de los resultados. Además, la augmentación de la base de datos real mediante técnicas de generación de datos sintéticas muy simplificadas no permite tener un modelo que dé buenos resultados en una aplicación real.
