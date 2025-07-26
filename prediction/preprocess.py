@@ -1,4 +1,6 @@
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+
 
 def split_last_day_data(dataset : pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     """ Split the dataset to get the last day of data and the training dataset.
@@ -61,3 +63,31 @@ def preprocess_data(dataset : pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
 
     return X, y
 
+
+def normalize_data(X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.Series, y_val: pd.Series, y_test: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, pd.Series, MinMaxScaler, MinMaxScaler]:
+    """ Normalize the data using Min-Max scaling.
+    
+    Args:
+        X_train (pd.DataFrame): Training features.
+        X_val (pd.DataFrame): Validation features.
+        X_test (pd.DataFrame): Test features.
+        y_train (pd.Series): Training target variable.
+        y_val (pd.Series): Validation target variable.
+        y_test (pd.Series): Test target variable.
+    
+    Returns:
+        tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, pd.Series]: Normalized features and target variables.
+    """
+
+    scaler_X = MinMaxScaler()
+    scaler_y = MinMaxScaler()
+
+    X_train_scaled = scaler_X.fit_transform(X_train)
+    X_val_scaled = scaler_X.transform(X_val)
+    X_test_scaled = scaler_X.transform(X_test)
+
+    y_train_scaled = scaler_y.fit_transform(y_train.values.reshape(-1, 1)).flatten()
+    y_val_scaled = scaler_y.transform(y_val.values.reshape(-1, 1)).flatten()
+    y_test_scaled = scaler_y.transform(y_test.values.reshape(-1, 1)).flatten()
+
+    return X_train_scaled, X_val_scaled, X_test_scaled, y_train_scaled, y_val_scaled, y_test_scaled, scaler_X, scaler_y

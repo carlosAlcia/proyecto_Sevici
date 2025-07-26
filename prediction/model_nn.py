@@ -1,8 +1,11 @@
 import torch 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 class ModelNN(torch.nn.Module):
+    """A simple feedforward neural network model for regression tasks."""
+
     def __init__(self, input_size:int, hidden_size:list[int], output_size:int):
         super(ModelNN, self).__init__()
         # Define the layers of the neural network
@@ -37,7 +40,7 @@ class ModelNN(torch.nn.Module):
         self.train()
         return self.forward(x)
 
-    def fit(self, x:pd.DataFrame, y:pd.DataFrame, x_val:pd.DataFrame=None, y_val:pd.DataFrame=None, epochs:int=100, lr:float=0.001, early_stopping:bool=True, patience:int=10) -> tuple[list, list]:
+    def fit(self, x:pd.DataFrame, y:pd.DataFrame, x_val:pd.DataFrame=None, y_val:pd.DataFrame=None, epochs:int=100, lr:float=0.001, early_stopping:bool=True, patience:int=10, plot_graphs:bool=False) -> tuple[list, list]:
         """Train the neural network."""
 
         # Convert DataFrame to PyTorch tensors
@@ -89,7 +92,19 @@ class ModelNN(torch.nn.Module):
                         break
         print('Training complete.')
         self.eval()
+        if plot_graphs:
+            self._plot_graphs(train_losses, val_losses)
         return self, train_losses, val_losses
+    
+    def _plot_graphs(self, train_losses:list, val_losses:list):
+        # Plot training and validation losses
+        plt.figure(figsize=(10, 6))
+        plt.plot(train_losses, label='Training Loss')
+        plt.plot(val_losses, label='Validation Loss')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.legend()
+        plt.show()
     
     def score(self, x:pd.DataFrame, y:pd.DataFrame) -> float:
         """Evaluate the model on the test data."""
