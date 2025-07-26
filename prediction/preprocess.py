@@ -64,30 +64,27 @@ def preprocess_data(dataset : pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     return X, y
 
 
-def normalize_data(X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.Series, y_val: pd.Series, y_test: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, pd.Series, MinMaxScaler, MinMaxScaler]:
+def normalize_data(X:pd.DataFrame, y:pd.Series, X_scaler:MinMaxScaler=None, y_scaler:MinMaxScaler=None) -> tuple[pd.DataFrame, pd.Series]:
     """ Normalize the data using Min-Max scaling.
     
     Args:
-        X_train (pd.DataFrame): Training features.
-        X_val (pd.DataFrame): Validation features.
-        X_test (pd.DataFrame): Test features.
-        y_train (pd.Series): Training target variable.
-        y_val (pd.Series): Validation target variable.
-        y_test (pd.Series): Test target variable.
-    
+        X (pd.DataFrame): Features to normalize.
+        y (pd.Series): Target variable to normalize.
+        X_scaler (MinMaxScaler, optional): Scaler for features. If None, a new scaler will be created.
+        y_scaler (MinMaxScaler, optional): Scaler for target variable. If None, a new scaler will be created.
     Returns:
-        tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, pd.Series]: Normalized features and target variables.
+        tuple[pd.DataFrame, pd.Series, MinMaxScaler]: Normalized features, normalized target variable, and the scaler used.
     """
 
-    scaler_X = MinMaxScaler()
-    scaler_y = MinMaxScaler()
+    if X_scaler is None:
+        X_scaler = MinMaxScaler()
+        X_scaler.fit(X)
+    if y_scaler is None:
+        y_scaler = MinMaxScaler()
+        y_scaler.fit(y.values.reshape(-1, 1))
 
-    X_train_scaled = scaler_X.fit_transform(X_train)
-    X_val_scaled = scaler_X.transform(X_val)
-    X_test_scaled = scaler_X.transform(X_test)
+    X_scaled = X_scaler.transform(X)
+    y_scaled = y_scaler.transform(y.values.reshape(-1, 1)).flatten()
 
-    y_train_scaled = scaler_y.fit_transform(y_train.values.reshape(-1, 1)).flatten()
-    y_val_scaled = scaler_y.transform(y_val.values.reshape(-1, 1)).flatten()
-    y_test_scaled = scaler_y.transform(y_test.values.reshape(-1, 1)).flatten()
-
-    return X_train_scaled, X_val_scaled, X_test_scaled, y_train_scaled, y_val_scaled, y_test_scaled, scaler_X, scaler_y
+    return X_scaled, y_scaled, X_scaler, y_scaler
+    

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 class ModelNN(torch.nn.Module):
     """A simple feedforward neural network model for regression tasks."""
 
-    def __init__(self, input_size:int, hidden_size:list[int], output_size:int):
+    def __init__(self, input_size:int, hidden_size:list[int], output_size:int, dropout_rate:float=0.2):
         super(ModelNN, self).__init__()
         # Define the layers of the neural network
         layers = []
@@ -18,7 +18,8 @@ class ModelNN(torch.nn.Module):
             layers.append(torch.nn.Linear(hidden_size[i], hidden_size[i+1]))
             layers.append(torch.nn.ReLU())
             # Dropout layer for regularization
-            layers.append(torch.nn.Dropout(0.2))  
+            if dropout_rate > 0:
+                layers.append(torch.nn.Dropout(dropout_rate))  
         # Output layer
         layers.append(torch.nn.Linear(hidden_size[-1], output_size))
         self.layers = torch.nn.Sequential(*layers)
@@ -40,13 +41,14 @@ class ModelNN(torch.nn.Module):
         self.train()
         return self.forward(x)
 
-    def fit(self, x:pd.DataFrame, y:pd.DataFrame, x_val:pd.DataFrame=None, y_val:pd.DataFrame=None, epochs:int=100, lr:float=0.001, early_stopping:bool=True, patience:int=10, plot_graphs:bool=False) -> tuple[list, list]:
+    def fit(self, x:pd.DataFrame, y:pd.DataFrame, eval_set:tuple[pd.DataFrame, pd.DataFrame]=None, epochs:int=100, lr:float=0.001, early_stopping:bool=True, patience:int=10, plot_graphs:bool=False) -> tuple[list, list]:
         """Train the neural network."""
 
         # Convert DataFrame to PyTorch tensors
         x = torch.tensor(x, dtype=torch.float32)
         y = torch.tensor(y, dtype=torch.float32).view(-1, 1)
-        if x_val is not None:
+        if eval_set is not None:
+            x_val, y_val = eval_set
             x_val = torch.tensor(x_val, dtype=torch.float32)
             y_val = torch.tensor(y_val, dtype=torch.float32).view(-1, 1)
 
