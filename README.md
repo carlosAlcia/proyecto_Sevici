@@ -47,7 +47,7 @@ Para evaluar los modelos, se separa el último día y otros puntos aleatorios de
 
 - Modelo CatBoostRegressor :
     Gráfica XY con set de test :
-    !(Catboost.png)[./images/Catboost.png]
+    ![Catboost.png](./images/Catboost.png)
     En esta gráfica, cuánto más cerca estén los puntos del eje diagonal, mejor son las predicciones. Puede verse que el modelo es capaz de aprender y los resultados siguen claramente la tendencia de la diagonal.
 
 
