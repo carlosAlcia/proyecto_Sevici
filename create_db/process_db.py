@@ -128,12 +128,18 @@ def create_day_data(day_data, day, i, events_probabilities):
     factor, events = compute_probability_factor(events_probabilities['binary_events'])
     # Apply the temperature factor to the available stands
     factor += temperature_factor
+    # Limit the factor to a maximum of 1.3
+    factor = min(factor, 1.3)
+    factor = max(factor, 0.7)  # Ensure the factor is not less than 0.7
 
     day_data['timestamp'] +=  pd.Timedelta(days=day-3, weeks=i) # The -3 is to start from the first day of the week in June(Monday)
     # Save the size of station before applying the factor
     station_size = day_data['available_bikes'] + day_data['available_stands']
     # Apply the factor to the difference in available stands
     day_data['available_stands'] = (day_data['available_stands'] * factor).astype(int)
+    # Apply a random noise to the available stands
+    noise = np.random.randint(-2, 3, size=len(day_data))
+    day_data['available_stands'] = day_data['available_stands'] + noise
     # Ensure the available stands do not exceed the station size
     day_data['available_stands'] = day_data['available_stands'].clip(upper=station_size, lower=0)
     # Update the available bikes accordingly
