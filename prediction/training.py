@@ -1,11 +1,10 @@
 # Created by Carlos Alvarez on 06-07-2025
 import pandas as pd
 from preprocess import preprocess_data, split_last_day_data
-from postprocess import postprocess_predictions, minutes_to_hhmm
+from postprocess import postprocess_predictions
 from catboost import CatBoostRegressor
 from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
+from plots_results import plot_last_day, plot_feature_importances, plot_predictions_vs_actual
 
 
 
@@ -39,50 +38,19 @@ if __name__ == "__main__":
  
 
     # Plot feature importances
-    feature_names = X.columns
-    importances = model.get_feature_importance()
-    plt.figure(figsize=(10, 6))
-    plt.barh(feature_names, importances)
-    plt.xlabel("Feature Importance")
-    plt.title("CatBoost Feature Importances")
-    plt.show()
+    plot_feature_importances(model, X.columns)
 
     # Plot the predictions vs actual values
-    plt.figure(figsize=(10, 6))
-    plt.scatter(y_test, predictions, alpha=0.5)
-    plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2)
-    plt.xlabel("Actual Values")
-    plt.ylabel("Predictions")
-    plt.grid(True)
-    plt.title("Predictions vs Actual Values")
-    plt.show()
+    plot_predictions_vs_actual(y_test, predictions)
 
     # Check the last day of data
     X_test_last_day, y_test_last_day = preprocess_data(dataset_test_last_day)
     predictions_last_day = model.predict(X_test_last_day)
     predictions_last_day = postprocess_predictions(predictions_last_day)
 
-    # Plot the predictions for the last day of data for each station
-    stations = X_test_last_day['station_number'].unique()
-    fig, axes = plt.subplots(nrows=len(stations), ncols=1, figsize=(8, 4 * len(stations)), sharex=False)
+    # Plot the predictions for the last day of data
+    plot_last_day(X_test_last_day, predictions_last_day, y_test_last_day)
 
-    for i, station in enumerate(stations):
-        station_data = X_test_last_day[X_test_last_day['station_number'] == station]
-        station_predictions = predictions_last_day[X_test_last_day['station_number'] == station]
-        station_actual = y_test_last_day[X_test_last_day['station_number'] == station]
 
-        ax = axes[i]
-        ax.plot(station_data['hour_minute'], station_predictions, label='Prediction', marker='o')
-        ax.plot(station_data['hour_minute'], station_actual, label='Actual', marker='x')
-        ax.set_title(f'Station {station}')
-        ax.set_xlabel('Hour-Minute')
-        ax.set_ylabel('Number of Bikes')
-        ax.legend()
-        ax.grid(True)
-        ax.xaxis.set_major_formatter(ticker.FuncFormatter(minutes_to_hhmm))
-        ax.tick_params(axis='x', rotation=45)
-
-    plt.tight_layout()
-    plt.show()
 
 
