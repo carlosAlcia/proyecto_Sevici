@@ -45,10 +45,24 @@ En la carpeta `prediction` se encuentra el archivo `training.py`. Este archivo p
 
 Para evaluar los modelos, se separa el último día y otros puntos aleatorios de la base de datos antes del entrenamiento. Con estos puntos aleatorios se genera el set de test, con el que se puede estimar el rendimiento del modelo. Con los datos del último día se puede realizar una predicción de un día completo y realizar gráficas para visualizar mejor los resultados.
 
-- Modelo CatBoostRegressor :
-    Gráfica XY con set de test :
-    ![Catboost.png](./prediction/images/Catboost.png)
+- Modelo CatBoostRegressor:
+    - Gráfica XY con set de test:
+    ![Catboost XY Graph](./prediction/images/Catboost_XY.png)
     En esta gráfica, cuánto más cerca estén los puntos del eje diagonal, mejor son las predicciones. Puede verse que el modelo es capaz de aprender y los resultados siguen claramente la tendencia de la diagonal.
+    - Gráfica temporal del último día:
+    ![Catboost Day Graph](./prediction/images/Catboost.png)
+    En esta gráfica se puede ver cómo el modelo es capaz de aprender los valores medios del número de bicicletas disponibles en cada estacion según la hora del día. Al tener un ruido aleatorio en los datos, aprender los valores medios es lo mejor a lo que se puede aspirar.
+
+- Modelo MLP : 
+    - Gráfica XY con set de test:
+    ![MLP XY Graph](./prediction/images/NN_XY.png)
+    Al igual que para el modelo Catboost, la red MLP es capaz de seguir la tendencia de la diagonal.
+    - Gráfica temporal del último día:
+    ![MLP Day Graph](./prediction/images/NN.png)
+    De nuevo, el modelo es capaz de aprender los valores medios según la estación y la hora del día.
+
+
+
 
 
 
