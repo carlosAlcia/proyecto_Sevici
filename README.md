@@ -1,5 +1,7 @@
 # Sevici : Predicción del estado de estaciones Sevici
 
+![MLP Day Graph](./prediction/images/NN.png)
+
 
 ##  Descripción del proyecto
 
