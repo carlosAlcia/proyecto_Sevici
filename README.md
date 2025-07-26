@@ -64,9 +64,17 @@ Para evaluar los modelos, se separa el último día y otros puntos aleatorios de
 Como es de esperar, y dado que la base de datos ha sido en gran parte generada de forma sintética con conceptos muy simplificados, los modelos pueden aprender bien sobre los datos sin mucha complicación ni recurrir a técnicas cómo data augmentation, feature engineering o modelos neuronales más complejos.
 
 
-# Estructura de archivos
+## Estructura de archivos
 
+- `main.py`: Por ahora sin utilizar, contendrá el servidor que dará acceso al modelo de predicción.
+- **create_db** : Esta carpeta contiene los scripts necesarios para obtener la base de datos desde la API de JCDecaux y para aumentarla de forma sintética.
+    - `generate_db.py` : Es el archivo principal para aumentar la base de datos de forma sintética.
+    - `create_db_from_api.py` : Es el archivo que se debe llamar periódicamente para incorporar los datos desde la API de JCDecaux a la base de datos PostgreSQL.
+- **prediction** : Esta carpeta contiene el código para entrenar los modelos. También contiene las carpetas de imágenes y modelos donde se almacenan los resultados del entrenamiento.
+    - `training.py`: Es el archivo principal que se debe ejecutar para lanzar el entrenamiento de un modelo. Las definiciones iniciales permiten elegir entre el modelo CatBoost o el modelo MLP (nn: neural network), así como alterar algunos parámetros de configuración.
 
+## Estado del proyecto
+En desarrollo. Próxima versión con servidor para dar acceso a las predicciones de los modelos.
 
 ### _NOTA IMPORTANTE_ 
 No se trata de una aplicación en producción ni de un sistema completo funcional.
