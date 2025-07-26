@@ -7,6 +7,7 @@ from catboost import CatBoostRegressor
 from sklearn.model_selection import train_test_split
 from plots_results import plot_last_day, plot_feature_importances, plot_predictions_vs_actual
 from model_nn import ModelNN
+import time
 
 
 # Definitions
@@ -19,17 +20,19 @@ PARAMS_MODEL_CATBOOST = {
     'verbose': 100
 }
 PARAMS_MODEL_NN = {
-    'hidden_size': [64, 64, 32, 32],
+    'hidden_size': [128,128,64,32,32,32],
     'output_size': 1,
-    'dropout_rate': 0
+    'dropout_rate': 0.15,
+    'use_batch_norm': True
 }
 
 PARAMS_TRAINING_NN = {
-    'epochs': 2000,
-    'lr': 0.005,
+    'epochs': 4000,
+    'lr': 0.001,
     'early_stopping': True,
-    'patience': 100,
-    'plot_graphs': True
+    'patience': 200,
+    'plot_graphs': True,
+    'verbose_freq': 100
 }
 
 
@@ -76,6 +79,12 @@ class ModelML:
         if print_score:
             print(f'Test score: {test_score}')
         return test_score
+    
+    def save_model(self, path:str='./models/'):
+        """Save the model to a file."""
+        timestamp = time.strftime("%m_%d-%H_%M")
+        self.model.save_model(f"{path}model_{self.model_type}_{timestamp}.{'cbm' if self.model_type == 'catboost' else 'pth'}")
+        
 
 
 
@@ -101,6 +110,9 @@ if __name__ == "__main__":
     elif MODEL_TYPE == 'nn':
         model = ModelML(MODEL_TYPE, input_size=X_train.shape[1], **PARAMS_MODEL_NN)
         model.fit(X_train, y_train, X_val, y_val, **PARAMS_TRAINING_NN)
+    
+    # Save the trained model
+    model.save_model()
 
     # Make predictions on the test data
     predictions = model.predict(X_test)
