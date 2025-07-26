@@ -32,6 +32,25 @@ Para generar los datos de 1 mes entero se han usado las siguientes suposiciones:
 - Un día de huelga en medios de transporte públicos aumenta el uso un 50%.
 
 Estos factores se calculan para un día completo. No es realista ya que la temperatura, por ejemplo, varía según la hora del día, al igual que otros factores como la lluvia. En una aplicación real, estas medidas serían tomadas de fuentes externas y estarían ajustadas según el momento del día.
+También se incluye un ruido aleatorio a los datos para dificultar el aprendizaje de los modelos.
+
+
+## Entrenamiento de los modelos de ML
+En la carpeta `prediction` se encuentra el archivo `training.py`. Este archivo permite elegir entre un modelo CatBoostRegressor o un modelo personalizado de red neuronal MLP. 
+
+- CatBoostRegressor : Modelo basado en gradient boosting sobre árboles de decisión. No necesita apenas preprocesamiento de los datos. Captura fácilmente relaciones no lineales y combinaciones entre variables.
+- MLP : Implementada en PyTorch. Arquitectura configurable con capas ocultas, dropout y normalización. Requiere normalizar los datos.
+
+### Resultados obtenidos
+
+Para evaluar los modelos, se separa el último día y otros puntos aleatorios de la base de datos antes del entrenamiento. Con estos puntos aleatorios se genera el set de test, con el que se puede estimar el rendimiento del modelo. Con los datos del último día se puede realizar una predicción de un día completo y realizar gráficas para visualizar mejor los resultados.
+
+- Modelo CatBoostRegressor :
+    Gráfica XY con set de test :
+    !(Catboost.png)[./images/Catboost.png]
+    En esta gráfica, cuánto más cerca estén los puntos del eje diagonal, mejor son las predicciones. Puede verse que el modelo es capaz de aprender y los resultados siguen claramente la tendencia de la diagonal.
+
+
 
 # Estructura de archivos
 
