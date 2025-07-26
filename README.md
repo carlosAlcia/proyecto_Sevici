@@ -1,7 +1,7 @@
 # Sevici : Predicción del estado de estaciones Sevici
 
 
-# Descripción del proyecto
+##  Descripción del proyecto
 
 ¿Habrá bicicletas en esta estación mañana temprano? ¿Podré aparcar la bicicleta cerca del trabajo? Conocer la disponibilidad de bicicletas y aparcamientos del servicio Sevici puede ser de gran ayuda a la hora de decidir qué medio de transporte utilizar.
 
