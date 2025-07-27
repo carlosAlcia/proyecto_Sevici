@@ -1,4 +1,5 @@
 # Sevici : Predicción del estado de estaciones Sevici
+**ENGLISH VERSION BELOW**
 
 ![MLP Day Graph](./prediction/images/NN.png)
 
@@ -83,3 +84,90 @@ No se trata de una aplicación en producción ni de un sistema completo funciona
 Su objetivo principal es servir como ejemplo técnico dentro de un portafolio personal, mostrando el uso de herramientas como Python, PostgreSQL, APIs públicas, visualización de datos, y conceptos de Machine Learning.
 
 El foco del proyecto está en la integración tecnológica, no en la explotación final de los resultados. Además, la augmentación de la base de datos real mediante técnicas de generación de datos sintéticas muy simplificadas no permite tener un modelo que dé buenos resultados en una aplicación real.
+
+**ENGLISH VERSION**
+
+# Sevici: Predicting the Status of Sevici Stations
+
+![MLP Day Graph](./prediction/images/NN.png)
+
+## Project Description
+
+Will there be bikes available at this station tomorrow morning? Will I be able to park my bike near work? Knowing the availability of bikes and parking spaces in the Sevici bike-sharing system can be very helpful when deciding which means of transport to use.
+
+This idea inspired the project: to provide users with a prediction service for the status of Sevici stations using machine learning models and real usage data from the service.
+
+## Database Generation
+
+To build a machine learning model capable of predicting the status of Sevici stations, a historical database is needed. The JCDecaux public API provides real-time status updates for the stations, but it does not offer historical data. After an unsuccessful attempt to contact the company for access to this data, the decision was made to create the database using real-time data collection.
+
+An automatic system was developed to collect real-time station data every 10 minutes over three days. These three days were chosen to be as representative as possible:
+- **Thursday**: A regular weekday.
+- **Friday**: A weekday that transitions into the weekend.
+- **Saturday**: A weekend day.
+
+Naturally, limiting the dataset to just three days is not sufficient to train a robust machine learning model. A more effective model would require data collected over a longer period, accounting for factors such as weather, holidays, and vacations. However, to keep the project feasible within a reasonable timeframe, the data collection was limited to these three days, and additional data was generated artificially using logical assumptions.
+
+### Collecting Real Data
+
+To collect real data every 10 minutes over three days, a Python script (`create_db_from_api.py`) was developed. This script queries the JCDecaux API and stores the data in a PostgreSQL database. To execute the script periodically, a new entry was added to the **crontab**, which allows scheduled tasks on Linux (and macOS).
+
+### Synthetic Data Generation
+
+To simulate data for a full month, the following assumptions were made:
+- Temperatures below 10°C or above 25°C reduce usage by 50%. Usage is estimated by the number of available stands to drop off bikes: the fewer bikes available, the higher the usage. This is a simplification that doesn't consider short trips or turnover rates.
+- Rain reduces usage by 80%.
+- Public holidays reduce usage by 30%.
+- Strong wind reduces usage by 50%.
+- A public transport strike increases usage by 50%.
+
+These factors are applied to full days. While not realistic—since weather conditions change throughout the day—in a real-world application, such data would be taken from external sources and adjusted by time of day. Random noise was also added to the dataset to make the learning task more challenging.
+
+## Training the ML Models
+
+The `prediction` folder contains the `training.py` file, which allows choosing between a **CatBoostRegressor** model and a custom **MLP neural network**.
+
+- **CatBoostRegressor**: A gradient boosting model using decision trees. It requires little preprocessing and easily captures non-linear relationships and variable interactions.
+- **MLP**: Implemented in PyTorch, with a configurable architecture including hidden layers, dropout, and normalization. Data must be normalized before training.
+
+### Results
+
+To evaluate the models, the last day and a random selection of data points were separated from the database before training. These random points make up the **test set**, used to estimate model performance. The last day's data is used to predict a full day and to generate visualizations.
+
+- **CatBoostRegressor**:
+    - XY Plot with test set:  
+    ![Catboost XY Graph](./prediction/images/Catboost_XY.png)  
+    In this plot, the closer the points are to the diagonal, the better the predictions. The model clearly learns the underlying trend.
+    - Time series plot of the last day:  
+    ![Catboost Day Graph](./prediction/images/Catboost.png)  
+    The model successfully learns the average number of available bikes at each station throughout the day. Since the data includes random noise, learning these average values is the best achievable outcome.
+
+- **MLP Model**:
+    - XY Plot with test set:  
+    ![MLP XY Graph](./prediction/images/NN_XY.png)  
+    Like the CatBoost model, the MLP follows the diagonal trend well.
+    - Time series plot of the last day:  
+    ![MLP Day Graph](./prediction/images/NN.png)  
+    Again, the model captures the average values based on the station and time of day.
+
+As expected, given that the database was largely generated synthetically using simplified concepts, both models are able to learn well from the data without the need for advanced techniques such as data augmentation, feature engineering, or deeper neural architectures.
+
+## File Structure
+
+- `main.py`: Not yet used. It will eventually run a server to expose the prediction model.
+- **create_db**: Contains scripts for retrieving and augmenting the database from the JCDecaux API.
+    - `generate_db.py`: Main script for generating synthetic data.
+    - `create_db_from_api.py`: Script to be run periodically to add real-time data from the JCDecaux API into the PostgreSQL database.
+- **prediction**: Contains training code, along with folders for storing model outputs and result images.
+    - `training.py`: Main training script. It allows switching between CatBoost and MLP models and tuning some configuration parameters.
+
+## Project Status
+
+In development. Next version will include a server to provide access to model predictions.
+
+### _IMPORTANT NOTE_
+
+This is **not** a production-ready application or a fully functional system.  
+Its main goal is to serve as a **technical showcase** in a personal portfolio, demonstrating the use of tools such as Python, PostgreSQL, public APIs, data visualization, and machine learning concepts.
+
+The focus of the project is on **technical integration**, not on final exploitation of the results. Moreover, the use of simplistic synthetic data generation techniques limits the model's effectiveness in a real-world application.
