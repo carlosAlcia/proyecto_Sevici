@@ -85,6 +85,7 @@ Su objetivo principal es servir como ejemplo técnico dentro de un portafolio pe
 
 El foco del proyecto está en la integración tecnológica, no en la explotación final de los resultados. Además, la augmentación de la base de datos real mediante técnicas de generación de datos sintéticas muy simplificadas no permite tener un modelo que dé buenos resultados en una aplicación real.
 
+---
 **ENGLISH VERSION**
 
 # Sevici: Predicting the Status of Sevici Stations
